@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'cat_users',
         ],
 
         'api' => [
@@ -46,6 +46,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        // 'cat_users' => [
+        //     'driver' => 'session',
+        //     'provider' => 'cat_users',
+            //'hash' => false,
+        // ],
+        
+        
     ],
 
     /*
@@ -69,6 +76,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+
+        'cat_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\CatUser::class,
         ],
 
         // 'users' => [

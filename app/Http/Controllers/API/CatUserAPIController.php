@@ -140,22 +140,7 @@ class CatUserAPIController extends AppBaseController
 
         //////////////
 
-        if($request->hasFile('avatar')){
-            $filenameWithExt = $request->file('avatar')->getClientOriginalName();
-            // Get just filename
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            // Get just ext
-            $extension = $request->file('avatar')->getClientOriginalExtension();
-            // Filename to store
-            $fileNameToStore= 'upload_'.$filename.'_'.time().'.'.$extension;
-            // Upload Image
-            $path = $request->file('avatar')->storeAs('public', $fileNameToStore);
-
-            $urlPath = URL::to('/').'/'.'storage'.'/'.$fileNameToStore;
-
-            $input['avatar'] = $urlPath;
-
-        }
+        
 
         ///////////////
 
@@ -186,5 +171,42 @@ class CatUserAPIController extends AppBaseController
         $catUser->delete();
 
         return $this->sendSuccess('Cat User deleted successfully');
+    }
+
+    public function updateAvatar(Request $request, $id)
+    {
+        //
+        $this->validate($request, [
+            //'title' => 'required',
+            //'body' => 'required',
+            'image' => 'required|image|max:1999'
+        ]);
+
+        $catImage = CatImage::find($id);
+        
+       // Handle File Upload
+       if($request->hasFile('image')){
+        // Get filename with the extension
+        $filenameWithExt = $request->file('image')->getClientOriginalName();
+        // Get just filename
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        // Get just ext
+        $extension = $request->file('image')->getClientOriginalExtension();
+        // Filename to store
+        $fileNameToStore= $filename.'_'.time().'.'.$extension;
+        // Upload Image
+        $path = $request->file('image')->storeAs('public', $fileNameToStore);
+    }
+
+    if($request->hasFile('image')){
+        $catImage->image = $fileNameToStore;
+    }
+
+
+
+     $catImage->image = $fileNameToStore;
+        $catImage->save();
+
+        return $this->sendResponse($catImage->toArray(), 'Cat Image saved successfully');
     }
 }

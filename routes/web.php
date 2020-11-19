@@ -26,3 +26,7 @@ Route::resource('users', 'UserController')->middleware('auth');
 
 
 Route::resource('catUsers', 'CatUserController');
+
+Route::resource('catCategories', 'CatCategoryController');
+
+Route::resource('catImages', 'CatImageController');

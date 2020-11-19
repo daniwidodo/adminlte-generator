@@ -20,3 +20,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::resource('cat_users', 'CatUserAPIController');
+
+Route::resource('cat_categories', 'CatCategoryAPIController');
+
+Route::resource('cat_images', 'CatImageAPIController');
+
+Route::('cat_user_update/{cat_user}', 'CatUserAPIController@updateAvatar');
+
+Route::resource('cat_images2', 'CatImage2Controller');

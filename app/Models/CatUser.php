@@ -59,7 +59,10 @@ class CatUser extends Authenticatable
      */
     public static $rules = [
         'email' => 'required',
-        'password' => 'required'
+        'password' => 'required',
+        'avatar' => 'required',
+        'name' => 'required',
+        
     ];
 
     protected $hidden = [

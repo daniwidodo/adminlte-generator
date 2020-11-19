@@ -9,6 +9,13 @@ use App\Repositories\CatUserRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Response;
+use Hash;
+
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
+
+
 
 /**
  * Class CatUserController
@@ -53,7 +60,38 @@ class CatUserAPIController extends AppBaseController
      */
     public function store(CreateCatUserAPIRequest $request)
     {
-        $input = $request->all();
+        // $input = $request->all();
+
+        //////////////
+
+        $input =  $request->all();
+
+        if (!empty($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            unset($input['password']);
+        }
+
+        if(!empty($input['avatar'])){
+            $filenameWithExt = $request->file('avatar')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $request->file('avatar')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore= 'upload_'.$filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('avatar')->storeAs('public', $fileNameToStore);
+
+            $urlPath = URL::to('/').'/'.'storage'.'/'.$fileNameToStore;
+
+            $input['avatar'] = $urlPath;
+
+        } else {
+            unset($input['avatar']);
+        }
+
+        ///////////////
 
         $catUser = $this->catUserRepository->create($input);
 
@@ -100,7 +138,28 @@ class CatUserAPIController extends AppBaseController
             return $this->sendError('Cat User not found');
         }
 
-        $catUser = $this->catUserRepository->update($input, $id);
+        //////////////
+
+        if($request->hasFile('avatar')){
+            $filenameWithExt = $request->file('avatar')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $request->file('avatar')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore= 'upload_'.$filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('avatar')->storeAs('public', $fileNameToStore);
+
+            $urlPath = URL::to('/').'/'.'storage'.'/'.$fileNameToStore;
+
+            $input['avatar'] = $urlPath;
+
+        }
+
+        ///////////////
+
+        $catUser = $this->catUserRepository->update($request, $id);
 
         return $this->sendResponse($catUser->toArray(), 'CatUser updated successfully');
     }
